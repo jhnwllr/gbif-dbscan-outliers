@@ -33,6 +33,7 @@ spark2-submit --num-executors 40 --executor-cores 5 --driver-memory 8g --driver-
 ```
 
 
+
 ## working with and clean up results 
 
 ```scala
