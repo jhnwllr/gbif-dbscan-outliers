@@ -5,6 +5,7 @@ Pilherodius pileatus.jpg
 
 ![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius pileatus.jpg)
 
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius%20pileatus.jpg)
 
 
 
