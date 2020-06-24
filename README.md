@@ -1,12 +1,7 @@
 
 ## DBSCAN outlier detection for GBIF occurrence data
 
-Pilherodius pileatus.jpg
-
-![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius pileatus.jpg)
-
 ![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius%20pileatus.jpg)
-
 
 
 This project is intended to detect outliers from GBIF occurrence data using simple haversine distance and clustering (i.e. DBSCAN).  
@@ -25,13 +20,16 @@ Run this using inside project home directory where the build.sbt is located.
 sbt assembly 
 ```
 
-
 ## Run this project on the cluster 
 
+The assembly jar `gbif-dbscan-outliers-assembly-0.1.jar` should be run with 3 cmd-line arguments: 
+
+1. **max_count** : the max number of unique lat lon points per species to run. Should be between 20K - 50K. Species with more occurrences are not run. 
+2. **epsilon** : the distance parameter in km for the dbscan algorithm. 1500 - 1800 probably good values
+3. **minPoints** : the minimum number of points for a cluster. 3 - 5 probably good values
+
 ```
-
-
-
+spark2-submit --num-executors 40 --executor-cores 5 --driver-memory 8g --driver-cores 4 --executor-memory 16g gbif-dbscan-outliers-assembly-0.1.jar 20000 1500 3
 ```
 
 
