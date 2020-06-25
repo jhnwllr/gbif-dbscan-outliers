@@ -7,7 +7,7 @@ This project detects outliers in GBIF occurrence data using clustering (i.e. DBS
 
 It was inspired by this blog post: https://www.oreilly.com/content/clustering-geolocated-data-using-spark-and-dbscan/
 
-The end result will be a table of outliers (probably around 1M-300K depending on the settings).
+The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Funig occurrunces (species with <20K unique points) takes around 1 hour. 
 
 ## Build this project
 
@@ -46,8 +46,17 @@ This will save a file in hdfs called `dbscan_outliers`.
 
 ## working with and clean up results 
 
-Below is one way to clean up the results into something more usuable. 
+The raw output, while pretty good, probably needs some extra filtering before usable. 
 
+For example, the species below has way too many "outliers" flagged. One fix for this would be to white-list species that have more than 5% of its unique points as outliers. 
+
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Ditropichthys%20storeri.jpg)
+
+
+Other species might have many points sitting exactly on one location from many observations over time. One could take the unique eventdate count of each occurrence and again white-list those occurrence locations for that species. Probably one would **NOT** want to white-list points which are simply duplicates on the same day.
+
+Below is one way to process the results into something more usuable for filtering. 
+ 
 ```scala
 
 val sqlContext = new org.apache.spark.sql.SQLContext(sc)

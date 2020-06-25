@@ -18,8 +18,6 @@ object outliers {
   def main(args: Array[String])
 	{
     
-	println("Starting App!")
-	
 	// command line arguments	
 	args.foreach(println)
 	val max_count = args(0).toInt // max num of occ that we will process per species	
@@ -46,14 +44,14 @@ object outliers {
 		dist * meterConversion
 	}
 	
+	
+	// start spark part
     val spark = SparkSession.builder().appName("dbscan_outliers").getOrCreate()
     val sc = spark.sparkContext
 
     import spark.implicits._
 	spark.sparkContext.setLogLevel("ERROR")
 
-	println("----------- reading in data ----------")
-	
 	val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 	
 	val SQL_OCCURRENCE = 
@@ -121,15 +119,13 @@ object outliers {
 	
 	val clusters_rdd = paired_rdd.mapValues(dbscan_outliers(_,epsilon,minPoints)) // get clusters
 
-	println("----------- start extracting data from clusters ----------")
-
 	// extract cluster data as dataframe   
 	val df_clusters = clusters_rdd.
 		map(r => (r._1,r._2)).toDF().
 		withColumnRenamed("_1","specieskey"). 
 		withColumn("lat_lon_array",explode($"_2")). // give each own row
 		withColumn("decimallatitude",$"lat_lon_array"(0)). // give each own column
-		withColumn("decimallongitude",$"lat_lon_array"(1)).
+		withColumn("decimallongitude",$"lat_lon_array"(1)). // give each own column
 		select("specieskey","decimallatitude","decimallongitude").
 		cache()
       	
@@ -147,13 +143,15 @@ object outliers {
 		df_clusters("specieskey") === df_join("specieskey_occ") &&
 		df_clusters("decimallatitude") === df_join("decimallatitude_occ") && 
 		df_clusters("decimallongitude") === df_join("decimallongitude_occ"),"left").
-		filter($"specieskey".isNull).
+		filter($"specieskey".isNull). // those without any cluster will be outliers
+		select(specieskey_occ,decimallatitude_occ,decimallongitude_occ). 
 		cache()
 		
-	println("----- outlier count ----- ")
+	println("---------- outlier count -------------------")
 	println(df_outliers.count())
 	df_outliers.show(100,false)
-			
+	
+	// Output results	
 	val save_table_name = "dbscan_outliers"
 	
 	df_outliers.
