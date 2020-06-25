@@ -67,7 +67,7 @@ object outliers {
 	decimallatitude, 
 	decimallongitude,
 	hasgeospatialissues,
-	basisofrecord,
+	basisofrecord
 	FROM  prod_h.occurrence
 	WHERE specieskey IS NOT NULL
 	"""

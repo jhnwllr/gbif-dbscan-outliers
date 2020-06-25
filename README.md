@@ -33,7 +33,11 @@ This will save a file in hdfs called `dbscan_outliers`.
 
 ## Plotted examples 
 
-![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius%20pileatus.jpg)
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Amoya%20gracilis.jpg)
+
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Bryum%20chryseum.jpg)
+
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Chalceus%20erythrurus.jpg)
 
 
 
