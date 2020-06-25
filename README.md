@@ -9,6 +9,9 @@ It was inspired by this blog post: https://www.oreilly.com/content/clustering-ge
 
 The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Fungi species with <20K unique points takes around 1 hour. 
 
+* There are **222 993** specieskeys with **less** than 20K unique lat-lon points 
+* There are only **2 283** specieskeys with **greater** than 20K unique lat-lon points
+
 The default (hard-coded) is to run only with species with >30 unique occurrence points. 
 
 > An **outlier** of course does not mean that the point is in any way bad or a mistake. It simply is a point that is not close to any other points, which might mean the user should probably look at these points more closely. Outliers can be mistakes but they can also be valuable observations from an undersampled region. There is no objective way from distance alone to tell the difference. 
