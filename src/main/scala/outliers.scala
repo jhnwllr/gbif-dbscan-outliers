@@ -15,9 +15,9 @@ import org.apache.spark.sql.SaveMode
 
 object outliers {
 
-  def main(args: Array[String])
+	def main(args: Array[String])
 	{
-    
+
 	// command line arguments	
 	args.foreach(println)
 	val max_count = args(0).toInt // max num of occ that we will process per species	
@@ -46,10 +46,10 @@ object outliers {
 	
 	
 	// start spark part
-    val spark = SparkSession.builder().appName("dbscan_outliers").getOrCreate()
-    val sc = spark.sparkContext
+	val spark = SparkSession.builder().appName("dbscan_outliers").getOrCreate()
+	val sc = spark.sparkContext
 
-    import spark.implicits._
+	import spark.implicits._
 	spark.sparkContext.setLogLevel("ERROR")
 
 	val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -84,16 +84,16 @@ object outliers {
 	val df_counts = df_original.groupBy("specieskey").count() // counts for filtering 
 		
 	val df_occ = df_counts.
-	join(df_original,"specieskey").
-	filter($"count" < max_count && $"count" > 30). // does not do well over 20-50K unique points
-	select("specieskey","decimallatitude","decimallongitude")
-  
+		join(df_original,"specieskey").
+		filter($"count" < max_count && $"count" > 30). // does not do well over 20-50K unique points
+		select("specieskey","decimallatitude","decimallongitude")
+	  
 	val df = df_occ.
-	select("specieskey","decimallatitude","decimallongitude").
-	withColumn("lat_lon_array",struct("decimallatitude","decimallongitude")).
-	groupBy("specieskey").
-	agg(collect_list($"lat_lon_array").as("lat_lon_array")).
-	select("specieskey","lat_lon_array")
+		select("specieskey","decimallatitude","decimallongitude").
+		withColumn("lat_lon_array",struct("decimallatitude","decimallongitude")).
+		groupBy("specieskey").
+		agg(collect_list($"lat_lon_array").as("lat_lon_array")).
+		select("specieskey","lat_lon_array")
 		
 	// convert to paired rdd for input into dbscan 	
 	val paired_rdd = df.rdd.map(r => {
@@ -128,11 +128,11 @@ object outliers {
 		withColumn("decimallongitude",$"lat_lon_array"(1)). // give each own column
 		select("specieskey","decimallatitude","decimallongitude").
 		cache()
-      	
+	
 	println("---------- cluster count -------------------")
 	println(df_clusters.count)
 
-   // join with original data to get outliers 
+	// join with original data to get outliers 
 	val df_join = df_occ. 
 		select("specieskey","decimallatitude","decimallongitude").
 		withColumnRenamed("decimallatitude","decimallatitude_occ").
