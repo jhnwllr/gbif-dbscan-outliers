@@ -9,6 +9,8 @@ It was inspired by this blog post: https://www.oreilly.com/content/clustering-ge
 
 The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Funig occurrunces (species with <20K unique points) takes around 1 hour. 
 
+> An **outlier** of course does not mean that the point is in any way bad or a mistake. It simply is a point that is not close to any other points, which might mean the user should probably look at these points more closely. Outliers can be mistakes but they can also be valuable observations from an undersampled region. There is no objective way from distance alone to tell the difference. 
+
 ## Build this project
 
 Run this using inside project home directory where the `build.sbt` is located. 
