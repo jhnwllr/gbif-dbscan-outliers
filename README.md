@@ -40,6 +40,9 @@ This will save a file in hdfs called `dbscan_outliers`.
 ![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Chalceus%20erythrurus.jpg)
 
 
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Eucalyptus%20bakeri.jpg)
+
+
 
 ## working with and clean up results 
 

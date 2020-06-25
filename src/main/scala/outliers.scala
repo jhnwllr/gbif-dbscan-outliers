@@ -26,7 +26,6 @@ object outliers {
 	val epsilon = args(1).toInt * 1000 // convert to meters. number of kilometers for distance 1500 - 1800 probably good choices	
 	val minPoints = args(2).toInt // min number of points per cluster 2-5 is a good value
 
-		
 	// sphere-earth distance
 	val haversineDistance: (DenseVector[Double], DenseVector[Double]) => Double = (x, y) =>
 	{
@@ -35,7 +34,6 @@ object outliers {
 		val thisLng = x.valueAt(1)
 		val otherLat = y.valueAt(0)
 		val otherLng = y.valueAt(1)
-
 		//compute the earth distance between locations
 		val earthRadius = 3958.7558657441; // earth radius in miles
 		val dLat = Math.toRadians(otherLat - thisLat)
@@ -43,9 +41,7 @@ object outliers {
 		val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(thisLat)) * Math.cos(Math.toRadians(otherLat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
 		val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 		val dist = earthRadius * c
-
 		val meterConversion = 1609.344
-
 		//convert to meters
 		dist * meterConversion
 	}
@@ -60,7 +56,8 @@ object outliers {
 	
 	val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 	
-	val SQL_OCCURRENCE = """
+	val SQL_OCCURRENCE = 
+	"""
 	SELECT DISTINCT					  
 	specieskey, 
 	kingdomkey,
@@ -74,17 +71,17 @@ object outliers {
 	
 	// val df_original = sqlContext.sql("SELECT * FROM prod_h.occurrence").
 	val df_original = sqlContext.sql(SQL_OCCURRENCE).
-	filter($"hasgeospatialissues" === false).
-	filter($"basisofrecord" =!= "FOSSIL_SPECIMEN").
-	filter($"basisofrecord" =!= "UNKNOWN").
-	filter($"basisofrecord" =!= "LIVING_SPECIMEN"). 
-	filter($"kingdomkey" === 1 || $"kingdomkey" === 6 || $"kingdomkey" === 5). 
-	select(
-	"specieskey",
-	"decimallatitude",
-	"decimallongitude"). 
-	distinct().
-	na.drop()
+		filter($"hasgeospatialissues" === false).
+		filter($"basisofrecord" =!= "FOSSIL_SPECIMEN").
+		filter($"basisofrecord" =!= "UNKNOWN").
+		filter($"basisofrecord" =!= "LIVING_SPECIMEN"). 
+		filter($"kingdomkey" === 1 || $"kingdomkey" === 6 || $"kingdomkey" === 5). 
+		select(
+		"specieskey",
+		"decimallatitude",
+		"decimallongitude"). 
+		distinct().
+		na.drop()
 
 	val df_counts = df_original.groupBy("specieskey").count() // counts for filtering 
 		
@@ -128,30 +125,30 @@ object outliers {
 
 	// extract cluster data as dataframe   
 	val df_clusters = clusters_rdd.
-	map(r => (r._1,r._2)).toDF().
-	withColumnRenamed("_1","specieskey"). 
-	withColumn("lat_lon_array",explode($"_2")). // give each own row
-	withColumn("decimallatitude",$"lat_lon_array"(0)). // give each own column
-	withColumn("decimallongitude",$"lat_lon_array"(1)).
-	select("specieskey","decimallatitude","decimallongitude").
-	cache()
+		map(r => (r._1,r._2)).toDF().
+		withColumnRenamed("_1","specieskey"). 
+		withColumn("lat_lon_array",explode($"_2")). // give each own row
+		withColumn("decimallatitude",$"lat_lon_array"(0)). // give each own column
+		withColumn("decimallongitude",$"lat_lon_array"(1)).
+		select("specieskey","decimallatitude","decimallongitude").
+		cache()
       	
 	println("---------- cluster count -------------------")
 	println(df_clusters.count)
 
    // join with original data to get outliers 
 	val df_join = df_occ. 
-	select("specieskey","decimallatitude","decimallongitude").
-	withColumnRenamed("decimallatitude","decimallatitude_occ").
-	withColumnRenamed("decimallongitude","decimallongitude_occ").
-	withColumnRenamed("specieskey","specieskey_occ")
+		select("specieskey","decimallatitude","decimallongitude").
+		withColumnRenamed("decimallatitude","decimallatitude_occ").
+		withColumnRenamed("decimallongitude","decimallongitude_occ").
+		withColumnRenamed("specieskey","specieskey_occ")
 
 	val df_outliers = df_join.join(df_clusters, 
-	df_clusters("specieskey") === df_join("specieskey_occ") &&
-	df_clusters("decimallatitude") === df_join("decimallatitude_occ") && 
-	df_clusters("decimallongitude") === df_join("decimallongitude_occ"),"left").
-	filter($"specieskey".isNull).
-	cache()
+		df_clusters("specieskey") === df_join("specieskey_occ") &&
+		df_clusters("decimallatitude") === df_join("decimallatitude_occ") && 
+		df_clusters("decimallongitude") === df_join("decimallongitude_occ"),"left").
+		filter($"specieskey".isNull).
+		cache()
 		
 	println("----- outlier count ----- ")
 	println(df_outliers.count())
@@ -160,12 +157,12 @@ object outliers {
 	val save_table_name = "dbscan_outliers"
 	
 	df_outliers.
-	select("specieskey_occ","decimallatitude_occ","decimallongitude_occ").
-	write.format("csv").
-	option("sep", "\t").
-	option("header", "false").
-	mode(SaveMode.Overwrite).
-	save(save_table_name)
+		select("specieskey_occ","decimallatitude_occ","decimallongitude_occ").
+		write.format("csv").
+		option("sep", "\t").
+		option("header", "false").
+		mode(SaveMode.Overwrite).
+		save(save_table_name)
 	
   }
 
