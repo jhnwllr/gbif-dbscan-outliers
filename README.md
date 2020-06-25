@@ -9,11 +9,13 @@ It was inspired by this blog post: https://www.oreilly.com/content/clustering-ge
 
 The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Fungi species with <20K unique points takes around 1 hour. 
 
+The default (hard-coded) is to run only with species with >30 unique occurrence points. 
+
 > An **outlier** of course does not mean that the point is in any way bad or a mistake. It simply is a point that is not close to any other points, which might mean the user should probably look at these points more closely. Outliers can be mistakes but they can also be valuable observations from an undersampled region. There is no objective way from distance alone to tell the difference. 
 
 ## Build this project
 
-Run this using inside project home directory where the `build.sbt` is located. 
+Run inside project home directory where the `build.sbt` is located. 
 
 ```
 sbt assembly 
@@ -56,6 +58,8 @@ For example, the species below has way too many "outliers" flagged. One fix for 
 
 
 Other species might have many points sitting exactly on one location from many observations over time. One could take the unique eventdate count of each occurrence and again white-list those occurrence locations for that species. Probably one would **NOT** want to white-list points which are simply duplicates on the same day.
+
+Also one might not want to flag species only known from 1 dataset, since it is very likely this species is not well studied and therefore the points we have are not be mistakes even if far apart from each other. 
 
 Below is one way to process the results into something more usuable for filtering. 
  
