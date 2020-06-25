@@ -62,7 +62,7 @@ For example, the species below has way too many "outliers" flagged. One fix for 
 
 Other species might have many points sitting exactly on one location from many observations over time. One could take the unique eventdate count of each occurrence and again white-list those occurrence locations for that species. Probably one would **NOT** want to white-list points which are simply duplicates on the same day.
 
-Also one might not want to flag species only known from 1 dataset, since it is very likely this species is not well studied and therefore the points we have are not be mistakes even if far apart from each other. 
+Also one might not want to flag species only known from 1 dataset, since it is very likely this species is not well studied and therefore the points we have are not be mistakes even if far apart from each other. [for example](https://www.gbif.org/occurrence/search?has_coordinate=true&taxon_key=5752635&advanced=1&geometry=POLYGON((104.13282%2028.75781,114.25784%2028.75781,114.25784%2039.72656,104.13282%2039.72656,104.13282%2028.75781)))
 
 Below is one way to process the results into something more usuable for filtering. 
  
