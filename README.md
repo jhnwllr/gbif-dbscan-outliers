@@ -1,20 +1,17 @@
 
 ## DBSCAN outlier detection for GBIF occurrence data
 
+This project detects outliers in GBIF occurrence data using clustering (i.e. DBSCAN) with haversine distance (sphere-earth distance).  
+
 ![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius%20pileatus.jpg)
 
+It was inspired by this blog post: https://www.oreilly.com/content/clustering-geolocated-data-using-spark-and-dbscan/
 
-This project is intended to detect outliers from GBIF occurrence data using simple haversine distance and clustering (i.e. DBSCAN).  
-
-The project is based roughly on this blog post: https://www.oreilly.com/content/clustering-geolocated-data-using-spark-and-dbscan/
-
-The outlier detection here is based on simple DBSCAN implementation [here][] and then run using spark-submit. 
-
-The end result will be a table of outliers (probably around 300K).
+The end result will be a table of outliers (probably around 1M-300K depending on the settings).
 
 ## Build this project
 
-Run this using inside project home directory where the build.sbt is located. 
+Run this using inside project home directory where the `build.sbt` is located. 
 
 ```
 sbt assembly 
@@ -32,16 +29,22 @@ The assembly jar `gbif-dbscan-outliers-assembly-0.1.jar` should be run with 3 cm
 spark2-submit --num-executors 40 --executor-cores 5 --driver-memory 8g --driver-cores 4 --executor-memory 16g gbif-dbscan-outliers-assembly-0.1.jar 20000 1500 3
 ```
 
+This will save a file in hdfs called `dbscan_outliers`. 
+
+## Plotted examples 
+
+![](https://raw.githubusercontent.com/jhnwllr/gbif-dbscan-outliers/master/image_examples/Pilherodius%20pileatus.jpg)
+
 
 
 ## working with and clean up results 
+
+Below is one way to clean up the results into something more usuable. 
 
 ```scala
 
 val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 import sqlContext.implicits._;
-
-// val df = sqlContext.sql("SELECT * FROM prod_h.occurrence").
 
 val df = spark.read.
 option("sep", "\t").
