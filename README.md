@@ -157,7 +157,11 @@ Seq("sed","-i",header,save_table_name).!
 
 ```
 
+## Other implementations to consider
 
+https://stackoverflow.com/questions/36090906/dbscan-on-spark-which-implementation
 
+https://github.com/haifengl/smile/blob/master/core/src/main/java/smile/clustering/DBSCAN.java
+Uses kd tree might scale better 
 
 
