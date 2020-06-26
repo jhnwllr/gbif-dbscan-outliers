@@ -7,10 +7,11 @@ This project detects outliers in GBIF occurrence data using clustering (i.e. DBS
 
 It was inspired by this blog post: https://www.oreilly.com/content/clustering-geolocated-data-using-spark-and-dbscan/
 
-The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Fungi species with <20K unique points takes around 1 hour. 
+The end result will be a table of outliers (probably around 1M-300K depending on the settings). Running on all Animal, Plant, and Fungi species with <20K unique points takes around 1 hour. Running with <30K unique points takes around 1.5 hours. <40K fails with out of memory errors. 
 
 * There are **222 993** specieskeys with **less** than 20K unique lat-lon points 
 * There are only **2 283** specieskeys with **greater** than 20K unique lat-lon points
+
 
 The default (hard-coded) is to run only with species with >30 unique occurrence points. 
 
